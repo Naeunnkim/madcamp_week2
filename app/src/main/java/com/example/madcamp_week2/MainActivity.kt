@@ -1,10 +1,19 @@
 package com.example.madcamp_week2
+import android.content.ContentValues.TAG
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.ImageButton
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
 import com.kakao.sdk.auth.LoginClient
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.KakaoSdk
@@ -12,7 +21,11 @@ import com.kakao.sdk.common.util.Utility
 import com.kakao.sdk.common.model.AuthErrorCause.*
 import com.kakao.sdk.user.UserApiClient
 
+var mGoogleSignInClient : GoogleSignInClient? = null
+
 class MainActivity : AppCompatActivity() {
+    private val RC_SIGN_IN: Int = 10
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
 
@@ -90,6 +103,45 @@ class MainActivity : AppCompatActivity() {
                 LoginClient.instance.loginWithKakaoAccount(this, callback = callback)
             }
         }
+
+
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
+            .build()
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
+
+    }
+    fun onClick(v: View) {
+        when (v.id) {
+            R.id.google_login_button -> signIn()
+        }
     }
 
+    private fun signIn() {
+        val googleSignInIntent = mGoogleSignInClient!!.signInIntent
+        googleLoginLauncher.launch(googleSignInIntent)
+    }
+
+    var googleLoginLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if(result.resultCode == -1) {
+            val data = result.data
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            getGoogleInfo(task)
+        }
+    }
+
+    fun getGoogleInfo(completedTask: Task<GoogleSignInAccount>) {
+        try {
+            val TAG ="구글 로그인 결과"
+            val account = completedTask.getResult(ApiException::class.java)
+            Log.d(TAG, account.id!!)
+            Log.d(TAG, account.familyName!!)
+            Log.d(TAG, account.givenName!!)
+            Log.d(TAG, account.email!!)
+        }
+        catch (e: ApiException) {
+            Log.w(TAG, "signInResult:failed code=" + e.statusCode)
+        }
+    }
 }

@@ -37,17 +37,17 @@
             android:layout_marginBottom="40dp"/>
 
         <ImageButton
-            android:id="@+id/kakao_login_button2"
+            android:id="@+id/naver_login_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/kakao_login_medium_narrow"
+            android:layout_marginBottom="40dp"
             android:background="@android:color/transparent"
-            app:layout_constraintLeft_toLeftOf="parent"
+            android:src="@drawable/kakao_login_medium_narrow"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="40dp"/>
+            app:layout_constraintLeft_toLeftOf="parent" />
 
         <ImageButton
-            android:id="@+id/kakao_login_button3"
+            android:id="@+id/google_login_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/kakao_login_medium_narrow"
